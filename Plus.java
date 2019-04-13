@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class Plus extends BinaryExpression implements Expression {
@@ -62,5 +60,41 @@ public class Plus extends BinaryExpression implements Expression {
     @Override
     public Expression differentiate(String var) {
         return new Plus(ex1.differentiate(var), ex2.differentiate(var));
+    }
+
+    /**
+     * Returned a simplified version of the current expression.
+     *
+     * @return the simplified expression
+     */
+    @Override
+    public Expression simplify() {
+        Boolean ex1Zero = false, ex2Zero = false;
+        try {
+            if (ex1.evaluate() == 0) {
+                ex1Zero = true;
+            }
+        } catch (Exception e) {
+            ex1Zero = false;
+        }
+        try {
+            if (ex2.evaluate() == 0) {
+                ex2Zero = true;
+            }
+        } catch (Exception e) {
+            ex2Zero = false;
+        }
+
+
+        if (ex1Zero && ex2Zero) {
+            return new Num(0);
+        } else if (ex1Zero) {
+            return ex2;
+        } else if (ex2Zero) {
+            return ex1;
+        }
+
+
+        return (new Plus(ex1.simplify(), ex2.simplify()));
     }
 }

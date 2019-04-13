@@ -1,5 +1,5 @@
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class Main {
@@ -81,8 +81,42 @@ public class Main {
             System.out.println("Exception was thrown");
 
         }
+        System.out.println("");
 
 
+
+        Expression e6 = new Log(new Num(3), new Plus (new Mul(new Num(10), new Var ("x")), new Num (5)));
+        System.out.println(e6);
+        System.out.println("");
+        System.out.println(e6.differentiate("x"));
+        System.out.println("");
+
+
+        Expression e7 = new Pow(new Var("x"), new Num(4));
+        System.out.println(e7);
+
+        Expression de = e7.differentiate("x");
+        System.out.println(de);
+        System.out.println("");
+
+
+        Expression e8 = new Pow(new Plus(new Var("x"), new Var("y")), new Num(2));
+        System.out.println(e8.differentiate("x"));
+        System.out.println("");
+
+        // the result is:
+        //  (((x + y) ^ 2.0) * (((1.0 + 0.0) * (2.0 / (x + y))) + (0.0 * log(e, (x + y))))
+        //My result is:
+        //  ((((x + y) ^ 2.0) * ((1.0 + 0.0) * (2.0 / (x + y)))) + (0.0 * log(e, (x + y))))
+
+
+
+        /// @@@@@ CHECK THE SIMPLIFICATION @@@@@
+        //Expression sim1 = new Plus(new Var("x"), new Num(0));
+        Expression sim1 = new Plus(new Plus(new Var("x"), new Num(0)), new Num(0));
+        // expected to get only (x);
+        System.out.println(sim1.simplify());
+        System.out.println("");
 
     }
 }

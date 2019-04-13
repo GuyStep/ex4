@@ -62,7 +62,19 @@ public class Pow extends BinaryExpression implements Expression {
      */
     @Override
     public Expression differentiate(String var) {
-        return new Mul(ex2, new Pow(ex1, ex2))
+        return new Plus(new Mul(this, new Mul(ex1.differentiate(var), new Div (ex2, ex1))),new Mul(ex2.differentiate(var
+        ),new Log(new Var("e"), ex1)));
+        ///NEED TO TEST BETTER
+    }
+
+    /**
+     * Returned a simplified version of the current expression.
+     *
+     * @return the simplified expression
+     */
+    @Override
+    public Expression simplify() {
+        return null;
     }
 }
 

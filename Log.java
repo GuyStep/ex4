@@ -1,6 +1,4 @@
-import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
 public class Log extends BinaryExpression implements Expression {
 
@@ -51,7 +49,7 @@ public class Log extends BinaryExpression implements Expression {
     }
 
     public String toString() {
-        return "Log(" + ex1.toString() + "^" + ex2.toString() + ")";
+        return "log(" + ex1.toString() + "," + ex2.toString() + ")";
     }
 
     /**
@@ -62,9 +60,22 @@ public class Log extends BinaryExpression implements Expression {
      */
     @Override
     public Expression differentiate(String var) {
-        return new Div(new Div(ex2.differentiate(var), ex2), new Div(ex1.differentiate(var), ex1));
-        return new Div(new Div(ex2.differentiate(var), ex2), new Div(ex1.differentiate(var), ex1));
+        Expression newExp1 = new Div(ex2.differentiate(var), ex2);
+        Expression newExp2 = new Div(ex1.differentiate(var), ex1);
+        return new Div(newExp1, newExp2).differentiate(var).differentiate(var);
+        //return new Div(new Div(ex2.differentiate(var), ex2), new Div(ex1.differentiate(var), ex1));
+        ///NEED TO TEST BETTER
 
+    }
+
+    /**
+     * Returned a simplified version of the current expression.
+     *
+     * @return the simplified expression
+     */
+    @Override
+    public Expression simplify() {
+        return null;
     }
 }
 

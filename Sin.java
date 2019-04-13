@@ -39,4 +39,14 @@ public class Sin implements Expression {
     public Expression differentiate(String var) {
         return new Mul(new Cos(ex), ex.differentiate(var));
     }
+
+    /**
+     * Returned a simplified version of the current expression.
+     *
+     * @return the simplified expression
+     */
+    @Override
+    public Expression simplify() {
+        return null;
+    }
 }

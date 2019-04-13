@@ -64,6 +64,16 @@ public class Div extends BinaryExpression implements Expression {
         return new Div(new Minus(new Mul(ex1.differentiate(var), ex2), new Mul(ex1, ex2.differentiate(var))),
                 new Pow(ex2, new Num(2)));
     }
+
+    /**
+     * Returned a simplified version of the current expression.
+     *
+     * @return the simplified expression
+     */
+    @Override
+    public Expression simplify() {
+        return null;
+    }
 }
 
 
