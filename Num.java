@@ -40,4 +40,14 @@ public class Num implements Expression {
     public Expression differentiate(String var) {
         return new Num (0);
     }
+
+    /**
+     * Returned a simplified version of the current expression.
+     *
+     * @return the simplified expression
+     */
+    @Override
+    public Expression simplify() {
+        return null;
+    }
 }

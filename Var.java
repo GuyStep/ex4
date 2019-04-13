@@ -16,7 +16,7 @@ public class Var implements Expression {
 
     @Override
     public double evaluate() throws Exception {
-        return 0;
+        throw new Exception();
     }
 
     @Override
@@ -53,5 +53,15 @@ public class Var implements Expression {
         else{
             return new Num(0);
         }
+    }
+
+    /**
+     * Returned a simplified version of the current expression.
+     *
+     * @return the simplified expression
+     */
+    @Override
+    public Expression simplify() {
+        return null;
     }
 }

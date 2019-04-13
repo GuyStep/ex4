@@ -66,4 +66,14 @@ public class Minus extends BinaryExpression implements Expression {
         return new Minus(ex1.differentiate(var), ex2.differentiate(var));
 
     }
+
+    /**
+     * Returned a simplified version of the current expression.
+     *
+     * @return the simplified expression
+     */
+    @Override
+    public Expression simplify() {
+        return null;
+    }
 }

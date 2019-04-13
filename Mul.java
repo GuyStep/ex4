@@ -61,6 +61,16 @@ public class Mul extends BinaryExpression implements Expression {
         return new Plus(new Mul(ex1.differentiate(var), ex2), new Mul(ex1, ex2.differentiate(var)));
 
     }
+
+    /**
+     * Returned a simplified version of the current expression.
+     *
+     * @return the simplified expression
+     */
+    @Override
+    public Expression simplify() {
+        return null;
+    }
 }
 
 
