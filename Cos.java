@@ -1,32 +1,32 @@
 import java.util.List;
 import java.util.Map;
 
-public class Cos implements Expression {
-    Expression ex;
+public class Cos extends UnaryExpression implements Expression {
 
     public Cos(Expression ex) {
-        this.ex = ex;
+        super(ex);
     }
 
     public double evaluate(Map<String, Double> assignment) throws Exception {
-        return Math.sin(ex.evaluate(assignment));
+        double res = Math.cos(getEx1().evaluate(assignment));
+        return res;
     }
 
     public double evaluate() throws Exception {
-        return Math.cos(evaluate());
+        return Math.cos(getEx1().evaluate());
     }
 
     public List<String> getVariables() {
-        return null; ////////////////////@@@@@@@
+        return getEx1().getVariables();
     }
 
     public String toString() {
-        String str = "Cos(" + ex.toString() + ")";
+        String str = "Cos(" + getEx1().toString() + ")";
         return str;
     }
 
     public Expression assign(String var, Expression expression) {
-        return new Cos(ex.assign(var, expression));
+        return new Cos(getEx1().assign(var, expression));
     }
 
     /**
@@ -37,7 +37,8 @@ public class Cos implements Expression {
      */
     @Override
     public Expression differentiate(String var) {
-        return new Mul(new Cos(ex), ex.differentiate(var));
+        Expression difEx = new Mult(new Cos(getEx1()), getEx1().differentiate(var));
+        return difEx;
     }
 
     /**
@@ -47,6 +48,9 @@ public class Cos implements Expression {
      */
     @Override
     public Expression simplify() {
-        return null;
+
+        return this;
     }
+
+
 }

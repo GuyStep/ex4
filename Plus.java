@@ -16,7 +16,8 @@ public class Plus extends BinaryExpression implements Expression {
      */
     @Override
     public double evaluate(Map<String, Double> assignment) throws Exception {
-        return ex1.evaluate(assignment) + ex2.evaluate(assignment);
+        double res = ex1.evaluate(assignment) + ex2.evaluate(assignment);
+        return res;
     }
 
     /**
@@ -59,7 +60,8 @@ public class Plus extends BinaryExpression implements Expression {
      */
     @Override
     public Expression differentiate(String var) {
-        return new Plus(ex1.differentiate(var), ex2.differentiate(var));
+        Expression difEx = new Plus(ex1.differentiate(var), ex2.differentiate(var));
+        return difEx;
     }
 
     /**
@@ -69,16 +71,18 @@ public class Plus extends BinaryExpression implements Expression {
      */
     @Override
     public Expression simplify() {
+        Expression ex1Simp = ex1.simplify(), ex2Simp = ex2.simplify();
+
         Boolean ex1Zero = false, ex2Zero = false;
         try {
-            if (ex1.evaluate() == 0) {
+            if (ex1Simp.evaluate() == 0) {
                 ex1Zero = true;
             }
         } catch (Exception e) {
             ex1Zero = false;
         }
         try {
-            if (ex2.evaluate() == 0) {
+            if (ex2Simp.evaluate() == 0) {
                 ex2Zero = true;
             }
         } catch (Exception e) {
@@ -89,12 +93,11 @@ public class Plus extends BinaryExpression implements Expression {
         if (ex1Zero && ex2Zero) {
             return new Num(0);
         } else if (ex1Zero) {
-            return ex2;
+            return ex2Simp;
         } else if (ex2Zero) {
-            return ex1;
+            return ex1Simp;
         }
 
-
-        return (new Plus(ex1.simplify(), ex2.simplify()));
+        return (new Plus(ex1Simp, ex2Simp));
     }
 }

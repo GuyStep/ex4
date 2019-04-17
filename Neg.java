@@ -1,32 +1,31 @@
 import java.util.List;
 import java.util.Map;
 
-public class Neg implements Expression {
-    Expression ex;
-
+public class Neg extends UnaryExpression implements Expression {
     public Neg(Expression ex) {
-        this.ex = ex;
+        super(ex);
     }
 
     public double evaluate(Map<String, Double> assignment) throws Exception {
-        return (-1) * ex.evaluate(assignment);
+        double res = (-1) * getEx1().evaluate(assignment);
+        return res;
     }
 
     public double evaluate() throws Exception {
-        return (-1) * ex.evaluate();
+        return (-1) * getEx1().evaluate();
     }
 
     public List<String> getVariables() {
-        return ex.getVariables();
+        return getEx1().getVariables();
     }
 
     public String toString() {
-        String str = "-" + ex.toString();
+        String str = "(-" + getEx1().toString() + ")";
         return str;
     }
 
     public Expression assign(String var, Expression expression) {
-        return new Mul(new Num(-1), ex.assign(var, expression));
+        return new Mult(new Num(-1), getEx1().assign(var, expression));
     }
 
     /**
@@ -37,7 +36,8 @@ public class Neg implements Expression {
      */
     @Override
     public Expression differentiate(String var) {
-        return null;
+        Expression difEx = new Neg(getEx1().differentiate(var));
+        return difEx;
     }
 
     /**
@@ -47,6 +47,6 @@ public class Neg implements Expression {
      */
     @Override
     public Expression simplify() {
-        return null;
+        return new Neg(getEx1().simplify());
     }
 }

@@ -1,6 +1,6 @@
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
+import java.util.TreeMap;
 
 public class Div extends BinaryExpression implements Expression {
 
@@ -19,7 +19,8 @@ public class Div extends BinaryExpression implements Expression {
      */
     @Override
     public double evaluate(Map<String, Double> assignment) throws Exception {
-        return ex1.evaluate(assignment) / ex2.evaluate(assignment);
+        double res = ex1.evaluate(assignment) / ex2.evaluate(assignment);
+        return res;
     }
 
     /**
@@ -61,8 +62,9 @@ public class Div extends BinaryExpression implements Expression {
      */
     @Override
     public Expression differentiate(String var) {
-        return new Div(new Minus(new Mul(ex1.differentiate(var), ex2), new Mul(ex1, ex2.differentiate(var))),
-                new Pow(ex2, new Num(2)));
+        Expression difEx = new Div(new Minus(new Mult(ex1.differentiate(var), ex2),
+                new Mult(ex1, ex2.differentiate(var))), new Pow(ex2, new Num(2)));
+        return difEx;
     }
 
     /**
@@ -72,8 +74,62 @@ public class Div extends BinaryExpression implements Expression {
      */
     @Override
     public Expression simplify() {
-        return null;
+        Expression ex1Simp = ex1.simplify();
+        Expression ex2Simp = ex2.simplify();
+        Boolean equality = false;
+
+        try {
+            return new Num(ex1Simp.evaluate() / ex2Simp.evaluate());
+        } catch (Exception e) {
+        }
+
+
+        try {
+            if (ex2Simp.evaluate() == 1) {
+                return ex1Simp;
+            }
+        } catch (Exception e) {
+        }
+
+        try {
+            if (ex1Simp.evaluate() == ex2Simp.evaluate()) {
+                equality = true;
+            } else {
+                equality = false;
+            }
+        } catch (Exception e) {
+        }
+
+
+        List<String> vars = ex1Simp.getVariables();
+        List<String> vars2 = ex2Simp.getVariables();
+
+        if (vars.containsAll(vars2) && vars2.containsAll(vars)) {
+            Map<String, Double> varsMap = new TreeMap<>();
+            double i = 2;
+            for (String s : vars) {
+                varsMap.put(s, i);
+                i += 1;
+            }
+
+            try {
+                if (ex1Simp.evaluate(varsMap) == ex2Simp.evaluate(varsMap)) {
+                    equality = true;
+                } else {
+                    equality = false;
+                }
+            } catch (Exception e) {
+            }
+
+        }
+
+
+        if (equality) {
+            return new Num(1);
+        } else return new Div(ex1.simplify(), ex2.simplify());
     }
+
+
 }
 
 

@@ -1,10 +1,9 @@
 import java.util.Map;
 
-public class Minus extends BinaryExpression implements Expression {
-    public Minus(Expression ex1, Expression ex2) {
+public class Mult extends BinaryExpression implements Expression {
+    public Mult(Expression ex1, Expression ex2) {
         super(ex1, ex2);
     }
-
 
     /**
      * Evaluate the expression using the variable values provided
@@ -17,7 +16,7 @@ public class Minus extends BinaryExpression implements Expression {
      */
     @Override
     public double evaluate(Map<String, Double> assignment) throws Exception {
-        double res = ex1.evaluate(assignment) - ex2.evaluate(assignment);
+        double res =ex1.evaluate(assignment) * ex2.evaluate(assignment);
         return res;
     }
 
@@ -29,7 +28,7 @@ public class Minus extends BinaryExpression implements Expression {
      */
     @Override
     public double evaluate() throws Exception {
-        return ex1.evaluate() - ex2.evaluate();
+        return ex1.evaluate() * ex2.evaluate();
     }
 
     /**
@@ -45,11 +44,11 @@ public class Minus extends BinaryExpression implements Expression {
     public Expression assign(String var, Expression expression) {
         Expression e1 = ex1.assign(var, expression);
         Expression e2 = ex2.assign(var, expression);
-        return new Minus(e1, e2);
+        return new Mult(e1, e2);
     }
 
     public String toString() {
-        return "(" + ex1.toString() + " - " + ex2.toString() + ")";
+        return "(" + ex1.toString() + " * " + ex2.toString() + ")";
     }
 
     /**
@@ -60,7 +59,7 @@ public class Minus extends BinaryExpression implements Expression {
      */
     @Override
     public Expression differentiate(String var) {
-        Expression difEx = new Minus(ex1.differentiate(var), ex2.differentiate(var));
+        Expression difEx =new Plus(new Mult(ex1.differentiate(var), ex2), new Mult(ex1, ex2.differentiate(var)));
         return difEx;
 
     }
@@ -72,36 +71,46 @@ public class Minus extends BinaryExpression implements Expression {
      */
     @Override
     public Expression simplify() {
-        Expression ex1Simp = ex1.simplify(), ex2Simp = ex2.simplify();
+        Expression ex1Simp = ex1.simplify(),ex2Simp = ex2.simplify();
 
-        Boolean ex1Zero = false, ex2Zero = false;
+
         try {
             if (ex1Simp.evaluate() == 0) {
-                ex1Zero = true;
+                return new Num(0);
+            } else if (ex1Simp.evaluate() == 1) {
+                return ex2Simp;
             }
         } catch (Exception e) {
-            ex1Zero = false;
         }
         try {
             if (ex2Simp.evaluate() == 0) {
-                ex2Zero = true;
+                return new Num(0);
+            } else if (ex2Simp.evaluate() == 1) {
+                return ex1Simp;
             }
         } catch (Exception e) {
-            ex2Zero = false;
         }
 
-
-        if (ex1Zero && ex2Zero) {
-            return new Num(0);
-        } else if (ex1Zero) {
-            return new Neg(ex2Simp);
-        } else if (ex2Zero) {
-            return ex1Simp;
+        try {
+            if (ex1Simp.evaluate() == 0) {
+                return new Num(0);
+            } else if (ex1Simp.evaluate() == 1) {
+                return ex2Simp;
+            }
+        } catch (Exception e) {
         }
-
-
-        return (new Minus(ex1Simp, ex2Simp));
+        /*
+        try {
+            if (ex2.evaluate() == 0) {
+                return new Num(0);
+            } else if (ex2.evaluate() == 1) {
+                return ex1Simp;
+            }
+        } catch (Exception e) {
+        }
+*/
+        return (new Mult(ex1Simp, ex2Simp));
     }
-
-
 }
+
+

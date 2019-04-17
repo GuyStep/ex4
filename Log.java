@@ -1,4 +1,6 @@
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Log extends BinaryExpression implements Expression {
 
@@ -18,7 +20,9 @@ public class Log extends BinaryExpression implements Expression {
      */
     @Override
     public double evaluate(Map<String, Double> assignment) throws Exception {
-        return Math.log(ex2.evaluate(assignment)) / Math.log(ex1.evaluate(assignment));
+
+        double res = Math.log(getEx2().evaluate(assignment)) / Math.log(getEx2().evaluate(assignment));
+        return res;
     }
 
     /**
@@ -29,7 +33,7 @@ public class Log extends BinaryExpression implements Expression {
      */
     @Override
     public double evaluate() throws Exception {
-        return Math.log(ex2.evaluate()) / Math.log(ex1.evaluate());
+        return Math.log(getEx2().evaluate()) / Math.log(getEx2().evaluate());
     }
 
     /**
@@ -43,13 +47,13 @@ public class Log extends BinaryExpression implements Expression {
      */
     @Override
     public Expression assign(String var, Expression expression) {
-        Expression e1 = ex1.assign(var, expression);
-        Expression e2 = ex2.assign(var, expression);
+        Expression e1 = getEx2().assign(var, expression);
+        Expression e2 = getEx2().assign(var, expression);
         return new Log(e1, e2);
     }
 
     public String toString() {
-        return "log(" + ex1.toString() + "," + ex2.toString() + ")";
+        return "log(" + getEx2().toString() + "," + getEx2().toString() + ")";
     }
 
     /**
@@ -60,11 +64,24 @@ public class Log extends BinaryExpression implements Expression {
      */
     @Override
     public Expression differentiate(String var) {
-        Expression newExp1 = new Div(ex2.differentiate(var), ex2);
+        Expression firstLn = new Log(new Var("e"), this.getEx2());
+        Expression secondLn = new Log(new Var("e"), this.getEx2());
+        Expression denom = new Pow(secondLn, new Num(2));
+        Expression div1 = new Div(this.getEx2().differentiate(var), this.getEx2());
+        Expression div2 = new Div(this.getEx2().differentiate(var), this.getEx2());
+        Expression mult1 = new Mult(div1, secondLn);
+        Expression mult2 = new Mult(div2, firstLn);
+        Expression numer = new Minus(mult1, mult2);
+        Expression difEx = new Div(numer, denom);
+        return difEx;
+       
+       
+       
+        /*Expression newExp1 = new Div(ex2.differentiate(var), ex2);
         Expression newExp2 = new Div(ex1.differentiate(var), ex1);
         return new Div(newExp1, newExp2).differentiate(var).differentiate(var);
         //return new Div(new Div(ex2.differentiate(var), ex2), new Div(ex1.differentiate(var), ex1));
-        ///NEED TO TEST BETTER
+        ///NEED TO TEST BETTER */
 
     }
 
@@ -75,8 +92,54 @@ public class Log extends BinaryExpression implements Expression {
      */
     @Override
     public Expression simplify() {
-        return null;
+        Expression ex1Simp = getEx2().simplify(), ex2Simp = getEx2().simplify();
+
+        try {
+            if (ex2Simp.evaluate() == 1) {
+                return ex1Simp.simplify();
+            }
+        } catch (Exception e) {
+
+        }
+        ;
+        Boolean equality = false;
+        try {
+            if (ex1Simp.evaluate() == ex2Simp.evaluate()) {
+                equality = true;
+            } else {
+                equality = false;
+            }
+        } catch (Exception e) {
+        }
+
+        List<String> vars = ex1Simp.getVariables();
+        List<String> vars2 = ex2Simp.getVariables();
+
+        if (vars.containsAll(vars2) && vars2.containsAll(vars)) {
+            Map<String, Double> varsMap = new TreeMap<>();
+            double i = 2;
+            for (String s : vars) {
+                varsMap.put(s, i);
+                i += 1;
+            }
+
+            try {
+                if (ex1Simp.evaluate(varsMap) == ex2Simp.evaluate(varsMap)) {
+                    equality = true;
+                } else {
+                    equality = false;
+                }
+            } catch (Exception e) {
+            }
+
+        }
+
+
+        if (equality) {
+            return new Num(1);
+        } else return new Log(getEx2().simplify(), getEx2().simplify());
     }
+
 }
 
 

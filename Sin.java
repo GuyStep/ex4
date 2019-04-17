@@ -1,32 +1,30 @@
 import java.util.List;
 import java.util.Map;
 
-public class Sin implements Expression {
-    Expression ex;
-
+public class Sin extends UnaryExpression implements Expression  {
     public Sin(Expression ex) {
-        this.ex = ex;
+        super(ex);
     }
 
     public double evaluate(Map<String, Double> assignment) throws Exception {
-        return Math.sin(ex.evaluate(assignment));
+        double res = Math.sin(getEx1().evaluate(assignment));
+        return res;
     }
 
     public double evaluate() throws Exception {
-        return Math.sin(evaluate());
+        return Math.sin(getEx1().evaluate());
     }
 
     public List<String> getVariables() {
-        return null; ////////////////////@@@@@@@
-    }
+        return getEx1().getVariables();   }
 
     public String toString() {
-        String str = "Sin(" + ex.toString() + ")";
+        String str = "Sin(" + getEx1().toString() + ")";
         return str;
     }
 
     public Expression assign(String var, Expression expression) {
-        return new Sin(ex.assign(var, expression));
+        return new Sin(getEx1().assign(var, expression));
     }
 
     /**
@@ -37,7 +35,8 @@ public class Sin implements Expression {
      */
     @Override
     public Expression differentiate(String var) {
-        return new Mul(new Cos(ex), ex.differentiate(var));
+        Expression difEx =new Mult(new Cos(getEx1()), getEx1().differentiate(var));
+        return difEx;
     }
 
     /**
@@ -47,6 +46,6 @@ public class Sin implements Expression {
      */
     @Override
     public Expression simplify() {
-        return null;
+        return this;
     }
 }

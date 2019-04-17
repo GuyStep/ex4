@@ -1,6 +1,4 @@
-import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
 public class Pow extends BinaryExpression implements Expression {
 
@@ -20,7 +18,8 @@ public class Pow extends BinaryExpression implements Expression {
      */
     @Override
     public double evaluate(Map<String, Double> assignment) throws Exception {
-        return Math.pow(ex1.evaluate(assignment), ex2.evaluate(assignment));
+        double res = Math.pow(ex1.evaluate(assignment), ex2.evaluate(assignment));
+        return res;
     }
 
     /**
@@ -62,9 +61,14 @@ public class Pow extends BinaryExpression implements Expression {
      */
     @Override
     public Expression differentiate(String var) {
-        return new Plus(new Mul(this, new Mul(ex1.differentiate(var), new Div (ex2, ex1))),new Mul(ex2.differentiate(var
-        ),new Log(new Var("e"), ex1)));
-        ///NEED TO TEST BETTER
+        Expression difEx = new Mult(new Pow(ex1, ex2),
+                new Plus(new Mult(ex1.differentiate(var), new Div(ex2, ex1)),
+                        new Mult(ex2.differentiate(var), new Log(new Var("e"), ex1))));
+        return difEx;
+        
+        /*return new Plus(new Mult(this, new Mult(ex1.differentiate(var), new Div(ex2, ex1))), new Mult(ex2.differentiate(var
+        ), new Log(new Var("e"), ex1)));
+        ///NEED TO TEST BETTER*/
     }
 
     /**
@@ -74,7 +78,20 @@ public class Pow extends BinaryExpression implements Expression {
      */
     @Override
     public Expression simplify() {
-        return null;
+        Expression ex1Simp = ex1.simplify(), ex2Simp = ex2.simplify();
+
+        try {
+            double ex1Res = ex1Simp.evaluate();
+            if (ex1Res == 0) {
+                return new Num(0);
+            } else if (ex1Res == 1)
+                return new Num(1);
+        } catch (Exception e) {
+        }
+
+        return new Pow(ex1Simp, ex2Simp);
+
+
     }
 }
 

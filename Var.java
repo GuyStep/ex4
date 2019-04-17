@@ -11,7 +11,8 @@ public class Var implements Expression {
 
     @Override
     public double evaluate(Map<String, Double> assignment) throws Exception {
-        return assignment.get(this.var);
+        double res = assignment.get(this.var);
+        return res;
     }
 
     @Override
@@ -47,10 +48,9 @@ public class Var implements Expression {
      */
     @Override
     public Expression differentiate(String var) {
-        if (this.var == var){
+        if (this.var == var) {
             return new Num(1);
-        }
-        else{
+        } else {
             return new Num(0);
         }
     }
@@ -62,6 +62,6 @@ public class Var implements Expression {
      */
     @Override
     public Expression simplify() {
-        return null;
+        return this;
     }
 }

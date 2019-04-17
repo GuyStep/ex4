@@ -17,7 +17,7 @@ public class Num implements Expression {
     }
 
     public List<String> getVariables() {
-        return null; ////////////////////@@@@@@@
+        return null;
     }
 
     public String toString() {
@@ -38,7 +38,8 @@ public class Num implements Expression {
      */
     @Override
     public Expression differentiate(String var) {
-        return new Num (0);
+        Expression difEx = new Num(0);
+        return difEx;
     }
 
     /**
@@ -48,6 +49,6 @@ public class Num implements Expression {
      */
     @Override
     public Expression simplify() {
-        return null;
+        return this;
     }
 }
